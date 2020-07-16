@@ -1,2 +1,2 @@
 .env
-mongodb/*
+mongodb/001_users.js
