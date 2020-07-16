@@ -1,0 +1,36 @@
+---
+
+- hosts: "docker"
+  tasks:
+  - name: sync repo with remote server
+    synchronize:
+      src: /opt/repo/short-url
+      dest: /opt/repo
+      delete: yes
+      recursive: yes
+  - name: build backend image
+    docker_image:
+      build:
+        path: /opt/repo/short-url/backend
+        pull: no
+      source: build
+      state: present
+      force_source: yes
+      name: backend
+      tag: "0.1"
+  - name: copy docker-compose.yml
+    copy:
+      src: /opt/ansible/docker-compose.yml
+      dest: /opt/short-url/
+  - name: copy .env
+    copy:
+      src: /opt/ansible/.env
+      dest: /opt/short-url/
+  - name: copy users.js
+    copy:
+      src: /opt/ansible/001_users.js
+      dest: /opt/short-url/
+  - name: recreate / start containers
+    shell:
+      chdir: /opt/short-url
+      cmd: docker-compose up -d

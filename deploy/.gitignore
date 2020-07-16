@@ -1,0 +1,4 @@
+src/vault.pass
+src/.env
+src/001_users.js
+src/inventories/**/*

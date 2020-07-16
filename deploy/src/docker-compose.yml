@@ -2,10 +2,8 @@ version: '3'
 
 services:
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    container_name: backend
+    image: backend:0.1
+    container_name: nodejs
     restart: unless-stopped
     env_file: .env
     environment:
@@ -15,9 +13,10 @@ services:
       - MONGO_PORT=${MONGO_PORT}
       - MONGO_DB=${MONGO_INITDB_DATABASE}
     ports:
-      - "8080:7331"
+      - "443:7331"
     volumes:
-      - ./backend/public:/usr/src/app/public
+      - ${CERT_PEM_PATH}:/usr/src/app/cert.pem
+      - ${KEY_PEM_PATH}:/usr/src/app/key.pem
       - node_modules:/home/node/app/node_modules
     networks:
       - app-network
@@ -34,7 +33,7 @@ services:
     ports:
       - "${MONGO_PORT}:${MONGO_PORT}"
     volumes:  
-      - ./mongodb/001_users.js:/docker-entrypoint-initdb.d/001_users.js:ro
+      - ./001_users.js:/docker-entrypoint-initdb.d/001_users.js:ro
       - dbdata:/data/db   
     networks:
       - app-network

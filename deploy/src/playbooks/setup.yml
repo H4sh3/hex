@@ -1,0 +1,11 @@
+---
+- hosts: "docker"
+  become: yes
+
+  roles:
+    - role: "nickjj.docker"
+      tags: ["docker"]
+    - role: weareinteractive.docker_compose
+      vars:
+        docker_compose_pip_executable: pip3
+      tags: ["docker-compose"]

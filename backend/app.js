@@ -15,8 +15,9 @@ const u = process.env.MONGO_INITDB_ROOT_USERNAME;
 const p = process.env.MONGO_INITDB_ROOT_PASSWORD;
 const dbn = process.env.MONGO_INITDB_DATABASE;
 const dbp = process.env.MONGO_PORT;
+const dbh = process.env.MONGO_HOSTNAME || 'localhost'
 
-const mongoUri = `${u}:${p}@db:${dbp}/${dbn}`
+const mongoUri = `${u}:${p}@${dbh}:${dbp}/${dbn}`
 console.log(mongoUri)
 const db = require('monk')(mongoUri)
 db.then(() => {
@@ -70,6 +71,7 @@ app.post('/url', async (req, res, next) => {
         const created = await urls.insert(newUrl)
         res.json(created);
     } catch (error) {
+        console.log(error)
         next(error)
     }
 });

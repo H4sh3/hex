@@ -1,0 +1,11 @@
+version: '3'
+services:
+  deploy:
+    build: .
+    volumes: 
+      - ./src:/opt/ansible
+      - ./deploy.sh:/opt/deploy.sh
+      - ${HSSPK}:/root/.ssh/id_rsa_github
+
+volumes:
+  db-data:
