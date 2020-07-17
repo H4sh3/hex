@@ -76,9 +76,9 @@
                         }),
                     })
                     this.created = await response.json()
-                    if(this.created["message"]){
+                    if (this.created["message"]) {
                         this.errors.push('Invalid url!');
-                    }else{
+                    } else {
                         this.shortenedUrl = 'https://' + document.domain + '/' + this.created["slug"]
                     }
                 },
