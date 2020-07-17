@@ -4,7 +4,6 @@ const morgan = require('morgan');
 const helmet = require('helmet');
 const app = express();
 const yup = require('yup');
-const https = require('https');
 const fs = require('fs');
 
 const { nanoid } = require('nanoid');
@@ -102,10 +101,6 @@ app.use((error, req, res, next) => {
 })
 
 const port = process.env.NODE_PORT || 7331
-https.createServer({
-    key: fs.readFileSync('https/key.pem'),
-    cert: fs.readFileSync('https/cert.pem')
-}, app)
-    .listen(port, () => {
-        console.log(`Listening on https://localhost:${port}`);
-    }) 
+app.listen(port, () => {
+    console.log(`Listening on http://localhost:${port}`);
+}) 
