@@ -77,7 +77,7 @@
                     })
                     this.created = await response.json()
                     if (this.created["message"]) {
-                        this.errors.push('Invalid url!');
+                        this.errors.push(this.created["message"]);
                     } else {
                         this.shortenedUrl = 'https://' + document.domain + '/' + this.created["slug"]
                     }

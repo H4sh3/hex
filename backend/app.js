@@ -35,7 +35,7 @@ app.use(express.static('./public'));
 
 const schema = yup.object().shape({
     slug: yup.string().trim().matches(/^[\w]+$/),
-    url: yup.string().trim().url().required()
+    url: yup.string().trim().url('Invalid url!').required()
 });
 
 app.get('/:id', async (req, res) => {
@@ -71,7 +71,6 @@ app.post('/url', async (req, res, next) => {
         const created = await urls.insert(newUrl)
         res.json(created);
     } catch (error) {
-        console.log(error)
         next(error)
     }
 });
