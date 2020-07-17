@@ -49,6 +49,7 @@ app.get('/:id', async (req, res) => {
         res.redirect('/')
     }
 });
+
 app.post('/url', async (req, res, next) => {
     let { slug, url } = req.body;
     if (!slug) {
@@ -75,6 +76,17 @@ app.post('/url', async (req, res, next) => {
     }
 });
 
+// if this env var is set the route will be created
+// you can get the secret from server logs
+// the route returns all current url entrys
+if (process.env.ENABLE_FIND_ALL_URI) {
+    const secret = nanoid(255)
+    console.log(`secret = ${secret}`)
+
+    app.get(`/secret/${secret}`, async (req, res) => {
+        res.json(await urls.find())
+    })
+}
 
 
 app.use((error, req, res, next) => {
@@ -88,20 +100,12 @@ app.use((error, req, res, next) => {
         stack: process.env.NODE_ENV === 'production' ? 'uups' : error.message
     })
 })
-/*
-app.get('/:id', (req, res) => {
-    // TODO: redir url
-});
 
-app.get('/url/:id', (req, res) => {
-    // TODO: get a short url by id
-});
-*/
 const port = process.env.NODE_PORT || 7331
 https.createServer({
     key: fs.readFileSync('https/key.pem'),
     cert: fs.readFileSync('https/cert.pem')
 }, app)
-.listen(port, () => {
-    console.log(`Listening on https://localhost:${port}`);
-}) 
+    .listen(port, () => {
+        console.log(`Listening on https://localhost:${port}`);
+    }) 
