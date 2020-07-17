@@ -13,10 +13,8 @@ services:
       - MONGO_PORT=${MONGO_PORT}
       - MONGO_DB=${MONGO_INITDB_DATABASE}
     ports:
-      - "443:7331"
+      - "8081:7331"
     volumes:
-      - ${CERT_PEM_PATH}:/usr/src/app/https/cert.pem
-      - ${KEY_PEM_PATH}:/usr/src/app/https/key.pem
       - node_modules:/home/node/app/node_modules
     networks:
       - app-network
