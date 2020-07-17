@@ -100,8 +100,8 @@ app.get('/url/:id', (req, res) => {
 */
 const port = process.env.NODE_PORT || 7331
 https.createServer({
-    key: fs.readFileSync('key.pem'),
-    cert: fs.readFileSync('cert.pem')
+    key: fs.readFileSync('https/key.pem'),
+    cert: fs.readFileSync('https/cert.pem')
 }, app)
 .listen(port, () => {
     console.log(`Listening on https://localhost:${port}`);
