@@ -6,17 +6,10 @@
 
 <body>
     <div id="app">
-        <h1>
-            Create a short-url
-        </h1>
-        <div v-if="shortenedUrl">
-            <span style="font-weight: bold;">
-                {{shortenedUrl}}
-            </span>
-            will now redirect to:
-            {{url}}
-        </div>
-        <div v-else>
+        <div v-if="!shortenedUrl">
+            <h1>
+                Create a short-url
+            </h1>
             <form @submit.prevent="validateForm" method="post" novalidate="true">
                 <p>
                     <label for="url">Url</label>
@@ -37,6 +30,17 @@
                 </p>
             </form>
         </div>
+        <div v-else>
+            <h1>
+                Done!
+            </h1>
+            <p style="font-weight: bold;">
+                {{shortenedUrl}}
+            </p>
+            now redirects to
+            <p>{{url}}</p>
+
+        </div>
     </div>
     <script src="https://unpkg.com/vue"></script>
     <script>
@@ -44,9 +48,9 @@
             el: '#app',
             data: {
                 errors: [],
-                url: null,
+                url: "",
                 slug: "",
-                shortenedUrl: null
+                shortenedUrl: ""
             },
             methods: {
                 validateForm(e) {
