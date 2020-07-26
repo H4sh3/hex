@@ -1,96 +1,105 @@
+<!DOCTYPE html>
 <html>
 
 <head>
-    <link rel="stylesheet" href="style.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css">
+    <title>
+        Url shortener
+    </title>
 </head>
 
 <body>
-    <div id="app">
-        <div v-if="!shortenedUrl">
-            <h1>
-                Create a short-url
-            </h1>
-            <form @submit.prevent="validateForm" method="post" novalidate="true">
-                <p>
-                    <label for="url">Url</label>
-                    <input id="url" v-model="url" type="url" name="url" min="0">
-                </p>
-                <p>
-                    <label for="slug">Slug</label>
-                    <input id="slug" v-model="slug" type="slug" name="slug" placeholder="( not required )">
-                </p>
-                <p>
-                    <input type="submit" value="Submit">
-                </p>
-                <p v-if="errors.length">
-                    <b>Please correct the following error(s):</b>
-                <ul>
-                    <li v-for="error in errors">{{ error }}</li>
-                </ul>
-                </p>
-            </form>
-        </div>
-        <div v-else>
-            <h1>
-                Done!
-            </h1>
-            <p style="font-weight: bold;">
-                {{shortenedUrl}}
-            </p>
-            now redirects to
-            <p>{{url}}</p>
+    <center>
+        <div id="app" class="box">
+            <div class="title">Short urls</div>
+            <div v-if="!shortenedUrl">
 
-        </div>
-    </div>
-    <script src="https://unpkg.com/vue"></script>
-    <script>
-        new Vue({
-            el: '#app',
-            data: {
-                errors: [],
-                url: "",
-                slug: "",
-                shortenedUrl: ""
-            },
-            methods: {
-                validateForm(e) {
-                    this.errors = [];
+                <form @submit.prevent="validateForm" method="post" novalidate="true">
+                    <div class="container">
+                        <div class="field">
+                            <label class="label" for="url">Url</label>
+                            <input id="url" v-model="url" type="url" name="url" min="0">
+                        </div>
+                        <div class="field">
+                            <label class="label" for="slug">Slug</label>
+                            <input id="slug" v-model="slug" type="slug" name="slug" placeholder="( not required )">
+                        </div>
+                        <div>
+                            <input type="submit" value="Submit" class="button is-primary"></input>
+                        </div>
+                        <div v-if="errors.length">
+                            <b>Please correct the following error(s):</b>
+                            <div>
+                                <li v-for="error in errors">{{ error }}</li>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div v-else>
+                <h1>
+                    Done!
+                </h1>
+                <p style="font-weight: bold;">
+                    {{shortenedUrl}}
+                </p>
+                now redirects to
+                <p>{{url}}</p>
 
-                    if (!this.url) {
-                        this.errors.push('Enter url to shorten!');
-                    }
-                    if (this.slug && !this.validSlug(this.slug)) {
-                        this.errors.push('Invalid slug! only letters and numbers allowed');
-                    }
-                    if (!this.errors.length) {
-                        this.submitNewUrl()
-                    }
+            </div>
+        </div>
+        <script src="https://unpkg.com/vue"></script>
+        <script>
+            new Vue({
+                el: '#app',
+                data: {
+                    errors: [],
+                    url: "",
+                    slug: "",
+                    shortenedUrl: ""
                 },
-                async submitNewUrl() {
-                    const response = await fetch('/url', {
-                        method: 'POST',
-                        headers: {
-                            'content-type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            'url': this.url,
-                            'slug': this.slug
-                        }),
-                    })
-                    this.created = await response.json()
-                    if (this.created["message"]) {
-                        this.errors.push(this.created["message"]);
-                    } else {
-                        this.shortenedUrl = 'https://' + document.domain + '/' + this.created["slug"]
+                methods: {
+                    validateForm(e) {
+                        this.errors = [];
+
+                        if (!this.url) {
+                            this.errors.push('Enter url to shorten!');
+                        }
+                        if (this.slug && !this.validSlug(this.slug)) {
+                            this.errors.push('Invalid slug! only letters and numbers allowed');
+                        }
+                        if (!this.errors.length) {
+                            this.submitNewUrl()
+                        }
+                    },
+                    async submitNewUrl() {
+                        const response = await fetch('/url', {
+                            method: 'POST',
+                            headers: {
+                                'content-type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                'url': this.url,
+                                'slug': this.slug
+                            }),
+                        })
+                        this.created = await response.json()
+                        if (this.created["message"]) {
+                            this.errors.push(this.created["message"]);
+                        } else {
+                            this.shortenedUrl = 'https://' + document.domain + '/' + this.created["slug"]
+                        }
+                    },
+                    validSlug(slug) {
+                        const re = RegExp(/^[\w]+$/);
+                        return slug.match(re);
                     }
-                },
-                validSlug(slug) {
-                    const re = RegExp(/^[\w]+$/);
-                    return slug.match(re);
                 }
-            }
-        })
-    </script>
+            })
+        </script>
 </body>
+</center>
 
 </html>
