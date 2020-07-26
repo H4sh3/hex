@@ -12,16 +12,17 @@
 
 <center>
 <body>
+    <div class="title is-1 is-spaced">Zeta Short Urls</div>
         <div id="app" class="container">
             <div class="box">
-                <div class="title">Short urls</div>
+                <div class="subtitle">Create a short URL</div>
                 <div v-if="!shortenedUrl">
 
                     <form @submit.prevent="validateForm" method="post" novalidate="true">
                         <div class="container">
                             <div class="field">
                                 <label class="label" for="url">Url</label>
-                                <input id="url" v-model="url" type="url" name="url" min="0">
+                                <input id="url" v-model="url" type="url" name="url" min="0" placeholder="( paste the url here )">
                             </div>
                             <div class="field">
                                 <label class="label" for="slug">Slug</label>
