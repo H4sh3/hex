@@ -10,96 +10,98 @@
     </title>
 </head>
 
+<center>
 <body>
-    <center>
-        <div id="app" class="box">
-            <div class="title">Short urls</div>
-            <div v-if="!shortenedUrl">
+        <div id="app" class="container">
+            <div class="box">
+                <div class="title">Short urls</div>
+                <div v-if="!shortenedUrl">
 
-                <form @submit.prevent="validateForm" method="post" novalidate="true">
-                    <div class="container">
-                        <div class="field">
-                            <label class="label" for="url">Url</label>
-                            <input id="url" v-model="url" type="url" name="url" min="0">
-                        </div>
-                        <div class="field">
-                            <label class="label" for="slug">Slug</label>
-                            <input id="slug" v-model="slug" type="slug" name="slug" placeholder="( not required )">
-                        </div>
-                        <div>
-                            <input type="submit" value="Submit" class="button is-primary"></input>
-                        </div>
-                        <div v-if="errors.length">
-                            <b>Please correct the following error(s):</b>
+                    <form @submit.prevent="validateForm" method="post" novalidate="true">
+                        <div class="container">
+                            <div class="field">
+                                <label class="label" for="url">Url</label>
+                                <input id="url" v-model="url" type="url" name="url" min="0">
+                            </div>
+                            <div class="field">
+                                <label class="label" for="slug">Slug</label>
+                                <input id="slug" v-model="slug" type="slug" name="slug" placeholder="( not required )">
+                            </div>
                             <div>
-                                <li v-for="error in errors">{{ error }}</li>
+                                <input type="submit" value="Submit" class="button is-primary"></input>
+                            </div>
+                            <div v-if="errors.length">
+                                <b>Please correct the following error(s):</b>
+                                <div>
+                                    <li v-for="error in errors">{{ error }}</li>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </form>
-            </div>
-            <div v-else>
-                <h1>
-                    Done!
-                </h1>
-                <p style="font-weight: bold;">
-                    {{shortenedUrl}}
-                </p>
-                now redirects to
-                <p>{{url}}</p>
+                    </form>
+                </div>
+                <div v-else>
+                    <h1>
+                        Done!
+                    </h1>
+                    <p style="font-weight: bold;">
+                        {{shortenedUrl}}
+                    </p>
+                    now redirects to
+                    <p>{{url}}</p>
 
+                </div>
             </div>
-        </div>
-        <script src="https://unpkg.com/vue"></script>
-        <script>
-            new Vue({
-                el: '#app',
-                data: {
-                    errors: [],
-                    url: "",
-                    slug: "",
-                    shortenedUrl: ""
-                },
-                methods: {
-                    validateForm(e) {
-                        this.errors = [];
+            <script src="https://unpkg.com/vue"></script>
+            <script>
+                new Vue({
+                    el: '#app',
+                    data: {
+                        errors: [],
+                        url: "",
+                        slug: "",
+                        shortenedUrl: ""
+                    },
+                    methods: {
+                        validateForm(e) {
+                            this.errors = [];
 
-                        if (!this.url) {
-                            this.errors.push('Enter url to shorten!');
+                            if (!this.url) {
+                                this.errors.push('Enter url to shorten!');
+                            }
+                            if (this.slug && !this.validSlug(this.slug)) {
+                                this.errors.push('Invalid slug! only letters and numbers allowed');
+                            }
+                            if (!this.errors.length) {
+                                this.submitNewUrl()
+                            }
+                        },
+                        async submitNewUrl() {
+                            const response = await fetch('/url', {
+                                method: 'POST',
+                                headers: {
+                                    'content-type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    'url': this.url,
+                                    'slug': this.slug
+                                }),
+                            })
+                            this.created = await response.json()
+                            if (this.created["message"]) {
+                                this.errors.push(this.created["message"]);
+                            } else {
+                                this.shortenedUrl = 'https://' + document.domain + '/' + this.created["slug"]
+                            }
+                        },
+                        validSlug(slug) {
+                            const re = RegExp(/^[\w]+$/);
+                            return slug.match(re);
                         }
-                        if (this.slug && !this.validSlug(this.slug)) {
-                            this.errors.push('Invalid slug! only letters and numbers allowed');
-                        }
-                        if (!this.errors.length) {
-                            this.submitNewUrl()
-                        }
-                    },
-                    async submitNewUrl() {
-                        const response = await fetch('/url', {
-                            method: 'POST',
-                            headers: {
-                                'content-type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                'url': this.url,
-                                'slug': this.slug
-                            }),
-                        })
-                        this.created = await response.json()
-                        if (this.created["message"]) {
-                            this.errors.push(this.created["message"]);
-                        } else {
-                            this.shortenedUrl = 'https://' + document.domain + '/' + this.created["slug"]
-                        }
-                    },
-                    validSlug(slug) {
-                        const re = RegExp(/^[\w]+$/);
-                        return slug.match(re);
                     }
-                }
-            })
-        </script>
+                })
+            </script>
 </body>
+</div>
 </center>
 
 </html>
