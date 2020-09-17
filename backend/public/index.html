@@ -2,107 +2,120 @@
 <html>
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css">
-    <title>
-      Zeta Short Urls
-    </title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css">
+  <title>
+    Zeta Short Urls
+  </title>
 </head>
 
-<center>
+<style>
+  div {
+    text-align: center;
+  }
+
+  body {
+    margin: 1rem;
+  }
+
+  .box {
+    background-color: #c9d5f8;
+  }
+</style>
+
 <body>
-    <div class="title is-1 is-spaced">Zeta Short Urls</div>
-        <div id="app" class="container">
-            <div class="box">
-                <div class="subtitle">Create a short URL</div>
-                <div v-if="!shortenedUrl">
+  <div id="app" class="container is-medium">
+    <div class="title is-1">Zeta Short Urls</div>
+    <div class="box">
+      <div class="subtitle">Create a short URL</div>
+      <div v-if="!shortenedUrl">
 
-                    <form @submit.prevent="validateForm" method="post" novalidate="true">
-                        <div class="container">
-                            <div class="field">
-                                <label class="label" for="url">Url</label>
-                                <input id="url" v-model="url" type="url" name="url" min="0" placeholder="( paste the url here )">
-                            </div>
-                            <div class="field">
-                                <label class="label" for="slug">Slug</label>
-                                <input id="slug" v-model="slug" type="slug" name="slug" placeholder="( not required )">
-                            </div>
-                            <div>
-                                <input type="submit" value="Submit" class="button is-primary"></input>
-                            </div>
-                            <div v-if="errors.length">
-                                <b>Please correct the following error(s):</b>
-                                <div>
-                                    <li v-for="error in errors">{{ error }}</li>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div v-else>
-                    <h1>
-                        Done!
-                    </h1>
-                    <p style="font-weight: bold;">
-                        {{shortenedUrl}}
-                    </p>
-                    now redirects to
-                    <p>{{url}}</p>
-
-                </div>
+        <form @submit.prevent="validateForm" method="post" novalidate="true">
+          <div class="container">
+            <div class="field">
+              <label class="label" for="url">Url</label>
+              <input id="url" v-model="url" type="url" name="url" min="0" placeholder="( paste the url here )">
             </div>
-            <script src="https://unpkg.com/vue"></script>
-            <script>
-                new Vue({
-                    el: '#app',
-                    data: {
-                        errors: [],
-                        url: "",
-                        slug: "",
-                        shortenedUrl: ""
-                    },
-                    methods: {
-                        validateForm(e) {
-                            this.errors = [];
+            <div class="field">
+              <label class="label" for="slug">Slug</label>
+              <input id="slug" v-model="slug" type="slug" name="slug" placeholder="( not required )">
+            </div>
+            <div>
+              <input type="submit" value="Submit" class="button is-primary"></input>
+            </div>
+            <div v-if="errors.length">
+              <b>Please correct the following error(s):</b>
+              <div>
+                <li v-for="error in errors">{{ error }}</li>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div v-else>
+        <h1>
+          Done!
+        </h1>
+        <p style="font-weight: bold;">
+          {{shortenedUrl}}
+        </p>
+        now redirects to
+        <p>{{url}}</p>
 
-                            if (!this.url) {
-                                this.errors.push('Enter url to shorten!');
-                            }
-                            if (this.slug && !this.validSlug(this.slug)) {
-                                this.errors.push('Invalid slug! only letters and numbers allowed');
-                            }
-                            if (!this.errors.length) {
-                                this.submitNewUrl()
-                            }
-                        },
-                        async submitNewUrl() {
-                            const response = await fetch('/url', {
-                                method: 'POST',
-                                headers: {
-                                    'content-type': 'application/json'
-                                },
-                                body: JSON.stringify({
-                                    'url': this.url,
-                                    'slug': this.slug
-                                }),
-                            })
-                            this.created = await response.json()
-                            if (this.created["message"]) {
-                                this.errors.push(this.created["message"]);
-                            } else {
-                                this.shortenedUrl = 'https://' + document.domain + '/' + this.created["slug"]
-                            }
-                        },
-                        validSlug(slug) {
-                            const re = RegExp(/^[\w]+$/);
-                            return slug.match(re);
-                        }
-                    }
-                })
-            </script>
+      </div>
+    </div>
+  </div>
 </body>
-</div>
-</center>
+<script src="https://unpkg.com/vue"></script>
+<script>
+  new Vue({
+    el: '#app',
+    data: {
+      errors: [],
+      url: "",
+      slug: "",
+      shortenedUrl: ""
+    },
+    methods: {
+      validateForm(e) {
+        this.errors = [];
+
+        if (!this.url) {
+          this.errors.push('Enter url to shorten!');
+        }
+        if (this.slug && !this.validSlug(this.slug)) {
+          this.errors.push('Invalid slug! only letters and numbers allowed');
+        }
+        if (!this.errors.length) {
+          this.submitNewUrl()
+        }
+      },
+      async submitNewUrl() {
+        const response = await fetch('/url', {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json'
+          },
+          body: JSON.stringify({
+            'url': this.url,
+            'slug': this.slug
+          }),
+        })
+        this.created = await response.json()
+        if (this.created["message"]) {
+          this.errors.push(this.created["message"]);
+        } else {
+          this.shortenedUrl = 'https://' + document.domain + '/' + this.created["slug"]
+        }
+      },
+      validSlug(slug) {
+        const re = RegExp(/^[\w]+$/);
+        return slug.match(re);
+      }
+    }
+  })
+</script>
+
 
 </html>
